@@ -1,26 +1,31 @@
 package main
 
 import (
+	"go-microservice/config"
+	"go-microservice/database"
+	"go-microservice/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+
+	config.Load()
+
+	database.Conn()
+
 	r := gin.Default()
 
-	// homepage
-	r.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"msg": "This is a blog, do you like it?",
-		})
-	})
+	r.GET("/", handlers.Homepage)
 
 	// blog post test
-	r.GET("/posts/:postID", func(ctx *gin.Context) {
-		postID := ctx.Param("postID")
-		ctx.JSON(200, gin.H{
-			"msg": "Requested post " + postID,
-		})
-	})
+	r.GET("/test", handlers.TestPage)
+
+	// blog get post
+	r.GET("/posts/:id", handlers.GetPost)
+
+	// blog make post
+	r.POST("/posts", handlers.CreatePost)
 
 	// running server
 	r.Run(":8080")
